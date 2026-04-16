@@ -424,7 +424,7 @@
                 descripcion: "Gigante de bronce de la mitología griega, considerado el primer concepto de un autómata guardián. Según la leyenda, Hefesto lo forjó para proteger la isla de Creta, patrullando sus costas tres veces al día. Representa la aspiración humana ancestral de crear seres artificiales con capacidad de acción autónoma.",
                 etiquetas: ["Mitología", "Autómata", "Guardián", "Concepto"],
                 image: "talos+final.webp",
-                youtubeShortId: "uxztCy7sv3k"
+                youtubeShortId: "6sHzBeB4apg"
             },
             {
                 id: 2,
@@ -676,7 +676,7 @@
                 arquitectura: "Humanoide / Percepción Dinámica",
                 descripcion: "Robot humanoide icónico de Honda que representó décadas de investigación en locomoción bípeda. Podía correr, subir escalones, servir bebidas y reconocer rostros y gestos. Con 120-130 cm de altura, su control de equilibrio dinámico estableció el estándar para humanoides, usando sensores giroscópicos y de fuerza en los pies.",
                 etiquetas: ["Humanoide", "Bípedo", "Equilibrio Dinámico", "Giroscópico", "Interacción"],
-                youtubeShortId: "Ud2oH9cwpV8"
+                youtubeShortId: "7vrht78UyvA"
             },
             {
                 id: 23,
@@ -688,7 +688,7 @@
                 arquitectura: "Autónoma / IA de Navegación",
                 descripcion: "Rover del tamaño de un auto con un laboratorio científico completo abordo. Utiliza el sistema AEGIS para seleccionar autónomamente objetivos científicos interesantes con su láser ChemCam. Con un generador termoeléctrico de plutonio, opera de forma indefinida en Marte, analizando la habitabilidad del planeta.",
                 etiquetas: ["Rover", "Marte", "AEGIS", "Láser", "Radioisótopos", "Autónomo"],
-                youtubeShortId: "-rDTkfDnsPQ0"
+                youtubeShortId: "-Ud2oH9cwpV8"
             },
             {
                 id: 24,
@@ -700,7 +700,7 @@
                 arquitectura: "Dinámica Avanzada / MPC",
                 descripcion: "Robot humanoide de 1.5 m diseñado inicialmente para el DARPA Robotics Challenge. La versión hidráulica podía realizar parkour, saltos mortales y danza compleja. Su Model Predictive Control (MPC) y percepción en tiempo real con LiDAR y estéreo lo convirtieron en el robot más ágil del mundo, redefiniendo los límites de la locomoción humanoide.",
                 etiquetas: ["Humanoide", "Parkour", "MPC", "LiDAR", "Hidráulico", "DARPA"],
-                youtubeShortId: "smO8NWLCss"
+                youtubeShortId: "v4vGGHeYtbg"
             },
             {
                 id: 25,
@@ -736,7 +736,7 @@
                 arquitectura: "Eléctrica / VLA Híbrida",
                 descripcion: "La nueva generación completamente eléctrica de Atlas, diseñado para aplicaciones comerciales reales. Presenta articulaciones que pueden rotar 360° (eliminando limitaciones humanas), sensores avanzados de percepción y está siendo integrado con modelos de visión-lenguaje-acción (VLA) para manipulación adaptable en fábricas de Hyundai.",
                 etiquetas: ["Humanoide", "Eléctrico", "VLA", "Comercial", "360° Joints"],
-                youtubeShortId: "e2gsHlC2HvM"
+                youtubeShortId: "O4uE5Tn-M6k"
             },
             {
                 id: 28,
@@ -760,7 +760,7 @@
                 arquitectura: "VLA / Modelos Fundacionales",
                 descripcion: "Humanoide diseñado para el trabajo general, integrado con modelos de lenguaje (OpenAI) para comprensión de instrucciones en lenguaje natural. Figure 02 incorpora visión-lenguaje-acción (VLA) que le permite observar su entorno, razonar y actuar. Ya desplegado en fábricas de BMW, representa la convergencia total de IA generativa y robótica.",
                 etiquetas: ["Humanoide", "VLA", "LLM", "OpenAI", "BMW", "Modelos Fundacionales"],
-                youtubeShortId: "83SQmj5bF9A"
+                youtubeShortId: "SUGQlsNcb5E"
             },
             {
                 id: 30,
@@ -772,7 +772,7 @@
                 arquitectura: "Foundation Model / Sim-to-Real",
                 descripcion: "Modelo fundacional de NVIDIA para robótica humanoide que permite a los robots entender lenguaje natural, imitar movimientos humanos y aprender a interactuar con el mundo real. Entrenado con NVIDIA Isaac Sim y Omniverse para transferencia sim-to-real, GR00T promete ser el \"ChatGPT de la robótica\": un modelo universal para cualquier cuerpo robótico.",
                 etiquetas: ["Foundation Model", "Sim-to-Real", "Omniverse", "Isaac Sim", "Transformers", "GPU"],
-                youtubeShortId: "h4SQUglSsH4"
+                youtubeShortId: "yMQP6mB8_ac"
             },
             {
                 id: 31,
@@ -784,7 +784,7 @@
                 arquitectura: "Autónoma / IA Avanzada + Dron",
                 descripcion: "El rover más avanzado de la NASA en Marte, equipado con el helicóptero Ingenuity (primer vuelo motorizado en otro planeta). Usa AutoNav mejorado para conducción autónoma a alta velocidad y PIXL para análisis mineralógico con rayos X. Su misión principal es buscar signos de vida microbiana antigua y preparar muestras para su retorno a la Tierra.",
                 etiquetas: ["Rover", "Marte", "Ingenuity", "Dron", "AutoNav", "Astrobiología"],
-                youtubeShortId: "yMQP6mB8_ac"
+                youtubeShortId: "7uLIDt1kurU"
             },
             {
                 id: 32,
@@ -1089,7 +1089,7 @@
         function openModal(robotId) {
             const robot = robots.find(r => r.id === robotId);
             if (!robot) return;
-            
+
             currentOpenRobotId = robotId;
 
             const eraObj = eras.find(e => e.id === robot.era);
@@ -1190,7 +1190,7 @@
             if (currentIndex === -1) return;
 
             let nextIndex = currentIndex + direction;
-            
+
             // Allow wrapping around
             if (nextIndex < 0) nextIndex = filtered.length - 1;
             if (nextIndex >= filtered.length) nextIndex = 0;
@@ -1226,7 +1226,7 @@
         // Keyboard controls
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeModal();
-            
+
             if (currentOpenRobotId) {
                 if (e.key === 'ArrowRight') {
                     navigateModal(1);
