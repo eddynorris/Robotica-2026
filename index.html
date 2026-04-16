@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Museo Interactivo de la Robótica — Explora la evolución de los robots desde los mitos antiguos hasta la inteligencia artificial moderna.">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>Museo Interactivo de la Robótica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    colors: {
+                        cyber: {
+                            50: '#ecfeff',
+                            100: '#cffafe',
+                            200: '#a5f3fc',
+                            300: '#67e8f9',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            800: '#155e75',
+                            900: '#164e63',
+                            950: '#083344',
+                        }
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'scan-line': 'scanLine 3s linear infinite',
+                        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+                        'slide-in': 'slideIn 0.4s ease-out forwards',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 5px rgba(6,182,212,0.4), 0 0 10px rgba(6,182,212,0.2)' },
+                            '50%': { boxShadow: '0 0 15px rgba(6,182,212,0.6), 0 0 30px rgba(6,182,212,0.3)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        scanLine: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slideIn: {
+                            '0%': { opacity: '0', transform: 'translateX(30px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #06b6d4; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #22d3ee; }
+
+        /* Grid background */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(6,182,212,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6,182,212,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Glowing line for timeline */
+        .timeline-line {
+            background: linear-gradient(180deg, transparent 0%, #06b6d4 10%, #06b6d4 90%, transparent 100%);
+            box-shadow: 0 0 10px rgba(6,182,212,0.5), 0 0 20px rgba(6,182,212,0.2);
+        }
+
+        /* Node glow on hover */
+        .node-ring {
+            transition: all 0.3s ease;
+        }
+        .node-ring:hover {
+            box-shadow: 0 0 20px rgba(6,182,212,0.8), 0 0 40px rgba(6,182,212,0.4);
+            transform: scale(1.2);
+        }
+
+        /* Tooltip */
+        .tooltip-custom {
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.25s ease;
+            pointer-events: none;
+        }
+        .group:hover .tooltip-custom {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Modal backdrop blur */
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* Glassmorphism card */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(6,182,212,0.15);
+        }
+
+        /* Horizontal timeline scrollbar */
+        .timeline-scroll::-webkit-scrollbar { height: 4px; }
+        .timeline-scroll::-webkit-scrollbar-track { background: rgba(15,23,42,0.5); }
+        .timeline-scroll::-webkit-scrollbar-thumb { background: #06b6d4; border-radius: 2px; }
+
+        /* Active era tab */
+        .era-tab-active {
+            background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(59,130,246,0.2));
+            border-color: #06b6d4;
+            color: #22d3ee;
+            box-shadow: 0 0 15px rgba(6,182,212,0.2);
+        }
+
+        /* Particle system */
+        .particle {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: rgba(6,182,212,0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Connector dots animation */
+        @keyframes dotMove {
+            0% { opacity: 0; transform: translateY(0); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(30px); }
+        }
+
+        .era-badge {
+            transition: all 0.3s ease;
+        }
+
+        /* Stagger animation delay helper */
+        .stagger-1 { animation-delay: 0.05s; }
+        .stagger-2 { animation-delay: 0.1s; }
+        .stagger-3 { animation-delay: 0.15s; }
+        .stagger-4 { animation-delay: 0.2s; }
+        .stagger-5 { animation-delay: 0.25s; }
+        .stagger-6 { animation-delay: 0.3s; }
+        .stagger-7 { animation-delay: 0.35s; }
+        .stagger-8 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans min-h-screen grid-bg">
+
+    <!-- Floating particles container -->
+    <div id="particles" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- ======== HEADER ======== -->
+    <header class="relative z-10 border-b border-slate-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center animate-pulse-glow">
+                            <i class="fa-solid fa-robot text-xl text-white"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-display font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                            MUSEO ROBÓTICA
+                        </h1>
+                        <p class="text-xs text-slate-500 tracking-widest uppercase">Evolución interactiva</p>
+                    </div>
+                </div>
+                <div class="hidden sm:flex items-center gap-3 text-xs text-slate-500">
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        En línea
+                    </span>
+                    <span class="border-l border-slate-700 pl-3">
+                        <i class="fa-solid fa-microchip mr-1"></i>
+                        <span id="robotCount">0</span> Robots catalogados
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======== ERA TABS ======== -->
+    <nav class="relative z-10 border-b border-slate-800/30 bg-slate-950/80 backdrop-blur-sm sticky top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-2 py-3 overflow-x-auto timeline-scroll" id="eraTabs">
+                <!-- Tabs rendered by JS -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- ======== MAIN CONTENT ======== -->
+    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Era description banner -->
+        <div id="eraDescription" class="mb-8 glass-card rounded-2xl p-5 transition-all duration-300">
+            <div class="flex items-start gap-4">
+                <div id="eraIcon" class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center shrink-0 text-cyan-400">
+                    <i class="fa-solid fa-timeline"></i>
+                </div>
+                <div>
+                    <h2 id="eraTitle" class="text-lg font-semibold text-cyan-300 font-display">Todas las Eras</h2>
+                    <p id="eraText" class="text-sm text-slate-400 mt-1">Explora la evolución completa de la robótica a través de la historia.</p>
+                </div>
+                <div class="ml-auto text-right shrink-0">
+                    <span id="eraCount" class="text-2xl font-bold text-cyan-400 font-display">0</span>
+                    <p class="text-xs text-slate-500">robots</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div id="timeline" class="relative">
+            <!-- Timeline rendered by JS -->
+        </div>
+    </main>
+
+    <!-- ======== MODAL ======== -->
+    <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop bg-black/60" onclick="closeModalOutside(event)">
+        <div id="modalContent" class="glass-card rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300" onclick="event.stopPropagation()">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-5 border-b border-slate-700/50">
+                <div class="flex items-center gap-3">
+                    <div id="modalEraIcon" class="w-8 h-8 rounded-lg flex items-center justify-center text-sm"></div>
+                    <div>
+                        <h3 id="modalTitle" class="text-xl font-bold text-white font-display"></h3>
+                        <p id="modalSubtitle" class="text-xs text-slate-400"></p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center transition-all duration-200 text-slate-400">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Video Player Area -->
+            <div class="p-5 pb-0">
+                <div class="relative rounded-xl overflow-hidden bg-slate-900 aspect-video shadow-2xl shadow-cyan-500/5">
+                    <iframe id="modalVideo" class="w-full h-full" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen></iframe>
+                </div>
+                <!-- Fallback link for local files (Error 153 bypass) -->
+                <div class="mt-3 flex justify-center">
+                    <a id="modalDirectLink" target="_blank" href="#" 
+                       class="text-[11px] flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-600/20 transition-all duration-200">
+                        <i class="fa-brands fa-youtube text-sm"></i>
+                        <span>¿El video no carga? Ver directamente en YouTube en este segundo</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Technical Sheet -->
+            <div class="p-5">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+                    <div class="bg-slate-800/50 rounded-xl p-3 border border-slate-700/30">
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Año</p>
+                        <p id="modalYear" class="text-lg font-bold text-cyan-400 font-display"></p>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-xl p-3 border border-slate-700/30">
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Creador</p>
+                        <p id="modalCreator" class="text-sm font-semibold text-slate-200 leading-tight"></p>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-xl p-3 border border-slate-700/30">
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Era</p>
+                        <p id="modalEra" class="text-sm font-semibold text-slate-200 leading-tight"></p>
+                    </div>
+                    <div class="bg-slate-800/50 rounded-xl p-3 border border-slate-700/30">
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Arquitectura</p>
+                        <p id="modalArch" class="text-sm font-semibold text-purple-400 leading-tight"></p>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-5">
+                    <h4 class="text-xs text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-file-lines"></i> Descripción Técnica
+                    </h4>
+                    <p id="modalDescription" class="text-sm text-slate-300 leading-relaxed"></p>
+                </div>
+
+                <!-- Tags -->
+                <div>
+                    <h4 class="text-xs text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-tags"></i> Etiquetas Técnicas
+                    </h4>
+                    <div id="modalTags" class="flex flex-wrap gap-2">
+                        <!-- Tags rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======== FOOTER ======== -->
+    <footer class="relative z-10 border-t border-slate-800/30 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+            <p>Museo Interactivo de la Robótica &copy; 2026 — Datos basados en <a href="https://www.youtube.com/watch?v=hft_i3TpRok" target="_blank" class="text-cyan-600 hover:text-cyan-400 transition-colors">"Evolution Of Robots"</a></p>
+            <p class="flex items-center gap-1.5">
+                <i class="fa-solid fa-code text-cyan-700"></i> Construido con Vanilla JS + Tailwind CSS
+            </p>
+        </div>
+    </footer>
+
+    <!-- ======== DATA & LOGIC ======== -->
+    <script>
+    // ====================================================
+    // ROBOT DATABASE — All robots from the video
+    // ====================================================
+    const robots = [
+        {
+            id: 1,
+            nombre: "Talos",
+            año: -400,
+            yearDisplay: "~400 a.C.",
+            creador: "Mitología Griega",
+            era: "Mitos y Autómatas",
+            arquitectura: "Mítica / Conceptual",
+            descripcion: "Gigante de bronce de la mitología griega, considerado el primer concepto de un autómata guardián. Según la leyenda, Hefesto lo forjó para proteger la isla de Creta, patrullando sus costas tres veces al día. Representa la aspiración humana ancestral de crear seres artificiales con capacidad de acción autónoma.",
+            etiquetas: ["Mitología", "Autómata", "Guardián", "Concepto"],
+            youtubeTimestamp: 15
+        },
+        {
+            id: 2,
+            nombre: "Autómatas de Herón",
+            año: 60,
+            yearDisplay: "~60 d.C.",
+            creador: "Herón de Alejandría",
+            era: "Mitos y Autómatas",
+            arquitectura: "Mecánica / Hidráulica",
+            descripcion: "Herón de Alejandría diseñó dispositivos automatizados usando mecanismos de vapor, poleas y contrapesos. Sus autómatas incluían puertas de templo que se abrían solas y figuras que servían vino. Documentó sus inventos en textos pioneros de neumática y mecánica.",
+            etiquetas: ["Hidráulico", "Neumático", "Mecánico", "Lazo Abierto"],
+            youtubeTimestamp: 35
+        },
+        {
+            id: 3,
+            nombre: "Autómatas de Al-Jazari",
+            año: 1206,
+            yearDisplay: "1206",
+            creador: "Ismail Al-Jazari",
+            era: "Mitos y Autómatas",
+            arquitectura: "Mecánica Programable",
+            descripcion: "El ingeniero musulmán Al-Jazari creó sofisticados autómatas mecánicos, incluyendo un grupo musical automático flotante y un lavamanos automático. Su \"Libro del conocimiento de los ingeniosos dispositivos mecánicos\" es considerado uno de los primeros textos de ingeniería robótica con instrucciones detalladas de programación mecánica mediante levas.",
+            etiquetas: ["Mecánico", "Programable", "Levas", "Ingeniería Medieval"],
+            youtubeTimestamp: 55
+        },
+        {
+            id: 4,
+            nombre: "Caballero Mecánico",
+            año: 1495,
+            yearDisplay: "~1495",
+            creador: "Leonardo da Vinci",
+            era: "Mitos y Autómatas",
+            arquitectura: "Mecánica Analógica",
+            descripcion: "Leonardo da Vinci diseñó un caballero mecánico que podía sentarse, levantar su visor, y mover los brazos mediante un sistema de poleas, cables y engranajes. Aunque posiblemente nunca se construyó en su época, los planos demuestran un profundo entendimiento de la anatomía y la cinemática que precede la robótica moderna por siglos.",
+            etiquetas: ["Mecánico", "Humanoide", "Cinemática", "Poleas"],
+            youtubeTimestamp: 75
+        },
+        {
+            id: 5,
+            nombre: "El Pato de Vaucanson",
+            año: 1739,
+            yearDisplay: "1739",
+            creador: "Jacques de Vaucanson",
+            era: "Mitos y Autómatas",
+            arquitectura: "Mecánica Biomimérica",
+            descripcion: "El Pato Digestor de Vaucanson fue un autómata que simulaba comer granos, digerirlos y excretarlos. Con más de 400 piezas móviles en cada ala, demostró un nivel de complejidad mecánica sin precedentes. Vaucanson también creó un flautista automático, adelantándose a la automatización industrial.",
+            etiquetas: ["Biomimético", "Mecánico", "Autómata", "400+ Piezas"],
+            youtubeTimestamp: 95
+        },
+        {
+            id: 6,
+            nombre: "El Turco Mecánico",
+            año: 1770,
+            yearDisplay: "1770",
+            creador: "Wolfgang von Kempelen",
+            era: "Mitos y Autómatas",
+            arquitectura: "Pseudo-Autónoma (Fraude)",
+            descripcion: "Un supuesto autómata jugador de ajedrez que derrotó a Napoleón y Benjamin Franklin. En realidad, ocultaba a un maestro de ajedrez humano dentro del mecanismo. A pesar de ser un engaño, inspiró reflexiones profundas sobre la inteligencia artificial y los límites de las máquinas, un debate que persiste hasta la era moderna.",
+            etiquetas: ["Ajedrez", "Pseudo-IA", "Entretenimiento", "Engaño"],
+            youtubeTimestamp: 115
+        },
+        {
+            id: 7,
+            nombre: "Elektro",
+            año: 1939,
+            yearDisplay: "1939",
+            creador: "Westinghouse Electric",
+            era: "Industriales",
+            arquitectura: "Electromecánica",
+            descripcion: "Presentado en la Feria Mundial de Nueva York de 1939, Elektro era un robot humanoide de 2.1 metros que podía caminar, hablar (usando grabaciones en disco de 78 RPM), fumar cigarrillos e inflar globos. Operado por comandos de voz que activaban relés telefónicos, representó la visión futurista de los robots domésticos.",
+            etiquetas: ["Humanoide", "Electromecánico", "Relés", "Feria Mundial"],
+            youtubeTimestamp: 140
+        },
+        {
+            id: 8,
+            nombre: "Unimate",
+            año: 1961,
+            yearDisplay: "1961",
+            creador: "George Devol & Joseph Engelberger",
+            era: "Industriales",
+            arquitectura: "Lazo Abierto / Secuencial",
+            descripcion: "El primer robot industrial del mundo, instalado en la línea de ensamblaje de General Motors para manipular piezas de fundición a presión. Pesaba 1,800 kg y ejecutaba secuencias programadas mediante un tambor magnético. Marcó el inicio de la automatización industrial y la robótica como disciplina ingenieril comercial.",
+            etiquetas: ["Industrial", "Lazo Abierto", "Brazo Robótico", "Tambor Magnético"],
+            youtubeTimestamp: 175
+        },
+        {
+            id: 9,
+            nombre: "Shakey",
+            año: 1969,
+            yearDisplay: "1966-1972",
+            creador: "SRI International",
+            era: "Era de la Percepción",
+            arquitectura: "Deliberativa (STRIPS)",
+            descripcion: "El primer robot móvil en integrar percepción, planificación y ejecución. Usaba una cámara de TV, un telémetro láser y sensores de contacto. Su planificador STRIPS (Stanford Research Institute Problem Solver) fue un hito en inteligencia artificial, introduciendo la representación simbólica del mundo para la toma de decisiones autónoma.",
+            etiquetas: ["Móvil", "STRIPS", "Planificación IA", "Cámara", "Deliberativo"],
+            youtubeTimestamp: 210
+        },
+        {
+            id: 10,
+            nombre: "Stanford Arm",
+            año: 1969,
+            yearDisplay: "1969",
+            creador: "Victor Scheinman (Stanford)",
+            era: "Industriales",
+            arquitectura: "6 DOF / Control Computarizado",
+            descripcion: "El primer brazo robótico completamente controlado por computadora con 6 grados de libertad. Su diseño articular revolucionó la robótica industrial al permitir movimientos más precisos y flexibles que los robots hidráulicos de la época. Fue la base para los robots PUMA que dominaron la manufactura en los 80s.",
+            etiquetas: ["Brazo Robótico", "6-DOF", "Eléctrico", "Stanford"],
+            youtubeTimestamp: 240
+        },
+        {
+            id: 11,
+            nombre: "WABOT-1",
+            año: 1973,
+            yearDisplay: "1973",
+            creador: "Universidad de Waseda",
+            era: "Era de la Percepción",
+            arquitectura: "Humanoide / Percepción Integrada",
+            descripcion: "Primer robot humanoide a escala completa del mundo. Podía caminar con sus extremidades inferiores, agarrar y transportar objetos con sus manos, y comunicarse en japonés con ojos y oídos artificiales. Su sistema de visión estimaba distancias y direcciones de objetos, estableciendo las bases de la robótica humanoide moderna.",
+            etiquetas: ["Humanoide", "Visión Artificial", "Bipedestación", "Comunicación"],
+            youtubeTimestamp: 270
+        },
+        {
+            id: 12,
+            nombre: "SCARA",
+            año: 1981,
+            yearDisplay: "1981",
+            creador: "Hiroshi Makino (Yamanashi)",
+            era: "Industriales",
+            arquitectura: "Cinemática Selectiva",
+            descripcion: "El robot SCARA (Selective Compliance Assembly Robot Arm) revolucionó el ensamblaje industrial con su diseño de brazo horizontal que combina rigidez vertical con flexibilidad lateral. Su velocidad y precisión lo hicieron ideal para operaciones pick-and-place en la manufactura electrónica, y sigue siendo uno de los tipos de robot más usados en fábricas.",
+            etiquetas: ["Industrial", "Ensamblaje", "Pick-and-Place", "Alta Velocidad"],
+            youtubeTimestamp: 300
+        },
+        {
+            id: 13,
+            nombre: "Genghis",
+            año: 1989,
+            yearDisplay: "1989",
+            creador: "Rodney Brooks (MIT)",
+            era: "Era de la Percepción",
+            arquitectura: "Reactiva / Subsunción",
+            descripcion: "Robot hexápodo del MIT que demostró la arquitectura de subsunción de Brooks: comportamientos simples en capas que generan conductas complejas emergentes sin modelo interno del mundo. Con 6 patas independientes y 12 sensores, caminaba por terreno irregular sin planificación centralizada, desafiando el paradigma clásico de IA simbólica.",
+            etiquetas: ["Hexápodo", "Subsunción", "Reactivo", "Comportamental", "Sin Modelo"],
+            youtubeTimestamp: 330
+        },
+        {
+            id: 14,
+            nombre: "Dante II",
+            año: 1994,
+            yearDisplay: "1994",
+            creador: "Carnegie Mellon University",
+            era: "Era de la Percepción",
+            arquitectura: "Semi-Autónoma / Teleoperada",
+            descripcion: "Robot explorador de 8 patas diseñado para descender al cráter del volcán Spurr en Alaska. Utilizaba un enlace satelital para comunicarse con operadores remotos y sensores para recoger muestras de gases volcánicos. Demostró la viabilidad de robots exploradores en entornos extremos e inaccesibles para los humanos.",
+            etiquetas: ["Explorador", "Teleoperado", "8 Patas", "Entorno Extremo", "Volcán"],
+            youtubeTimestamp: 360
+        },
+        {
+            id: 15,
+            nombre: "RoboTuna",
+            año: 1994,
+            yearDisplay: "1994",
+            creador: "MIT",
+            era: "Era de la Percepción",
+            arquitectura: "Biomimética",
+            descripcion: "Robot que replica la locomoción del atún azul del Atlántico para estudiar la hidrodinámica de los peces. Demostró que los peces usan vórtices del agua para reducir el esfuerzo de natación. Abrió el campo de los robots biomiméticos acuáticos para investigación oceanográfica, vigilancia submarina y exploración.",
+            etiquetas: ["Biomimético", "Acuático", "Hidrodinámica", "Bio-inspirado"],
+            youtubeTimestamp: 385
+        },
+        {
+            id: 16,
+            nombre: "Sojourner",
+            año: 1997,
+            yearDisplay: "1997",
+            creador: "NASA / JPL",
+            era: "Era de la Percepción",
+            arquitectura: "Semi-Autónoma / Reactiva",
+            descripcion: "Primer rover en explorar exitosamente la superficie de Marte en la misión Mars Pathfinder. Con solo 10.6 kg, usaba navegación semi-autónoma con sensores de proximidad láser para evitar obstáculos. Operó durante 83 días marcianos, superando su misión planificada de 7 días y demostrando la viabilidad de la robótica planetaria.",
+            etiquetas: ["Rover", "Marte", "NASA", "Navegación Autónoma", "Espacial"],
+            youtubeTimestamp: 415
+        },
+        {
+            id: 17,
+            nombre: "AIBO",
+            año: 1999,
+            yearDisplay: "1999",
+            creador: "Sony",
+            era: "Era de la Percepción",
+            arquitectura: "Comportamental / Aprendizaje",
+            descripcion: "Perro robot de entretenimiento de Sony que podía aprender y desarrollar su propia \"personalidad\" con el tiempo. Con cámara, micrófono, sensores táctiles y de distancia, AIBO podía reconocer caras, responder a comandos de voz y expresar emociones a través de LEDs. Vendió más de 150,000 unidades y democratizó la robótica personal.",
+            etiquetas: ["Mascota Robot", "Aprendizaje", "Entretenimiento", "Sensores Táctiles"],
+            youtubeTimestamp: 440
+        },
+        {
+            id: 18,
+            nombre: "ASIMO",
+            año: 2000,
+            yearDisplay: "2000",
+            creador: "Honda",
+            era: "Era de la Percepción",
+            arquitectura: "Humanoide / Percepción Dinámica",
+            descripcion: "Robot humanoide icónico de Honda que representó décadas de investigación en locomoción bípeda. Podía correr a 6 km/h, subir escalones, servir bebidas y reconocer rostros y gestos. Con 130 cm de altura y 54 kg, su control de equilibrio dinámico estableció el estándar para humanoides, usando sensores giroscópicos y de fuerza en los pies.",
+            etiquetas: ["Humanoide", "Bípedo", "Equilibrio Dinámico", "Giroscópico", "Interacción"],
+            youtubeTimestamp: 470
+        },
+        {
+            id: 19,
+            nombre: "Roomba",
+            año: 2002,
+            yearDisplay: "2002",
+            creador: "iRobot",
+            era: "Era de la Percepción",
+            arquitectura: "Reactiva / SLAM Básico",
+            descripcion: "La aspiradora robótica autónoma más exitosa comercialmente, con más de 40 millones de unidades vendidas. Utiliza sensores infrarrojos, de caída y de golpe para navegar hogares. Las versiones posteriores incorporaron SLAM visual para mapeo inteligente. Roomba demostró que los robots útiles no necesitan ser humanoides.",
+            etiquetas: ["Doméstico", "SLAM", "Aspirador", "Producto Consumo", "Reactivo"],
+            youtubeTimestamp: 500
+        },
+        {
+            id: 20,
+            nombre: "Spirit & Opportunity",
+            año: 2004,
+            yearDisplay: "2004",
+            creador: "NASA / JPL",
+            era: "Era de la Percepción",
+            arquitectura: "Semi-Autónoma / AutoNav",
+            descripcion: "Rovers gemelos de la NASA en Marte. Opportunity estableció el récord de distancia marciana con 45.16 km en 15 años de operación (diseñado para 90 días). Sus cámaras estereoscópicas y el sistema AutoNav permitían navegación autónoma evitando rocas. Descubrieron evidencia definitiva de agua líquida pasada en Marte.",
+            etiquetas: ["Rover", "Marte", "AutoNav", "NASA", "Estereoscopía"],
+            youtubeTimestamp: 530
+        },
+        {
+            id: 21,
+            nombre: "BigDog",
+            año: 2005,
+            yearDisplay: "2005",
+            creador: "Boston Dynamics",
+            era: "Era de la Percepción",
+            arquitectura: "Dinámica / Control de Balance",
+            descripcion: "Robot cuadrúpedo financiado por DARPA, diseñado como mula de carga militar. Con 109 kg y motor de combustión interna, podía caminar, trotar, escalar pendientes de 35° y recuperar el equilibrio tras ser empujado. Su sistema de control de estabilidad dinámica revolucionó la locomoción robótica en terreno irregular.",
+            etiquetas: ["Cuadrúpedo", "DARPA", "Equilibrio Dinámico", "Todo Terreno", "Hidráulico"],
+            youtubeTimestamp: 555
+        },
+        {
+            id: 22,
+            nombre: "Da Vinci (Intuitive Surgical)",
+            año: 2000,
+            yearDisplay: "2000",
+            creador: "Intuitive Surgical",
+            era: "Era de la Percepción",
+            arquitectura: "Teleoperada / Maestro-Esclavo",
+            descripcion: "Sistema quirúrgico robótico que permite cirugías mínimamente invasivas con precisión sobrehumana. El cirujano controla brazos robóticos a través de una consola con visión 3D y escala de movimiento. Ha realizado más de 12 millones de procedimientos en todo el mundo, transformando la cirugía moderna con cortes de menos de 1 mm.",
+            etiquetas: ["Quirúrgico", "Teleoperado", "Maestro-Esclavo", "Visión 3D", "Médico"],
+            youtubeTimestamp: 585
+        },
+        {
+            id: 23,
+            nombre: "Curiosity",
+            año: 2012,
+            yearDisplay: "2012",
+            creador: "NASA / JPL",
+            era: "Era de la Percepción",
+            arquitectura: "Autónoma / IA de Navegación",
+            descripcion: "Rover del tamaño de un auto con un laboratorio científico completo abordo. Utiliza el sistema AEGIS para seleccionar autónomamente objetivos científicos interesantes con su láser ChemCam. Con un generador termoeléctrico de plutonio, opera de forma indefinida en Marte, analizando la habitabilidad del planeta.",
+            etiquetas: ["Rover", "Marte", "AEGIS", "Láser", "Radioisótopos", "Autónomo"],
+            youtubeTimestamp: 615
+        },
+        {
+            id: 24,
+            nombre: "Atlas (2013)",
+            año: 2013,
+            yearDisplay: "2013",
+            creador: "Boston Dynamics",
+            era: "Modelos Fundacionales",
+            arquitectura: "Dinámica Avanzada / MPC",
+            descripcion: "Robot humanoide de 1.5 m diseñado inicialmente para el DARPA Robotics Challenge. La versión hidráulica podía realizar parkour, saltos mortales y danza compleja. Su Model Predictive Control (MPC) y percepción en tiempo real con LiDAR y estéreo lo convirtieron en el robot más ágil del mundo, redefiniendo los límites de la locomoción humanoide.",
+            etiquetas: ["Humanoide", "Parkour", "MPC", "LiDAR", "Hidráulico", "DARPA"],
+            youtubeTimestamp: 650
+        },
+        {
+            id: 25,
+            nombre: "Spot",
+            año: 2016,
+            yearDisplay: "2016",
+            creador: "Boston Dynamics",
+            era: "Modelos Fundacionales",
+            arquitectura: "Autónoma / Percepción 3D",
+            descripcion: "Robot cuadrúpedo comercial de 32 kg con percepción de 360°. Utiliza cámaras estéreo, sensores IMU y un brazo manipulador opcional. Desplegado en inspección industrial, seguridad y construcción, Spot puede subir escaleras, abrir puertas y operar de forma autónoma en entornos mapados con su sistema de navegación GraphNav.",
+            etiquetas: ["Cuadrúpedo", "Comercial", "GraphNav", "Inspección", "Autónomo"],
+            youtubeTimestamp: 680
+        },
+        {
+            id: 26,
+            nombre: "Sophia",
+            año: 2016,
+            yearDisplay: "2016",
+            creador: "Hanson Robotics",
+            era: "Modelos Fundacionales",
+            arquitectura: "NLP / Expresión Facial",
+            descripcion: "Robot humanoide social conocida por sus expresiones faciales realistas usando material Frubber y su capacidad de conversación con procesamiento de lenguaje natural. Obtuvo la ciudadanía saudita en 2017, generando debate global sobre los derechos de robots. Más que un avance técnico, Sophia simboliza la convergencia entre robótica e IA social.",
+            etiquetas: ["Humanoide Social", "NLP", "Expresiones Faciales", "Interacción Social"],
+            youtubeTimestamp: 710
+        },
+        {
+            id: 27,
+            nombre: "Atlas (Eléctrico)",
+            año: 2024,
+            yearDisplay: "2024",
+            creador: "Boston Dynamics",
+            era: "Modelos Fundacionales",
+            arquitectura: "Eléctrica / VLA Híbrida",
+            descripcion: "La nueva generación completamente eléctrica de Atlas, diseñado para aplicaciones comerciales reales. Presenta articulaciones que pueden rotar 360° (eliminando limitaciones humanas), sensores avanzados de percepción y está siendo integrado con modelos de visión-lenguaje-acción (VLA) para manipulación adaptable en fábricas de Hyundai.",
+            etiquetas: ["Humanoide", "Eléctrico", "VLA", "Comercial", "360° Joints"],
+            youtubeTimestamp: 740
+        },
+        {
+            id: 28,
+            nombre: "Optimus (Tesla Bot)",
+            año: 2022,
+            yearDisplay: "2022-2024",
+            creador: "Tesla",
+            era: "Modelos Fundacionales",
+            arquitectura: "End-to-End Neural / FSD Transfer",
+            descripcion: "Robot humanoide de Tesla que hereda la tecnología de conducción autónoma FSD. Utiliza redes neuronales end-to-end entrenadas con video directo de sus cámaras para manipulación de objetos sin programación explícita. Con un enfoque en producción masiva y bajo costo, Tesla busca que cada persona pueda tener un robot personal.",
+            etiquetas: ["Humanoide", "Neural End-to-End", "FSD", "Producción Masiva", "Transformers"],
+            youtubeTimestamp: 775
+        },
+        {
+            id: 29,
+            nombre: "Figure 01 / Figure 02",
+            año: 2024,
+            yearDisplay: "2023-2024",
+            creador: "Figure AI",
+            era: "Modelos Fundacionales",
+            arquitectura: "VLA / Modelos Fundacionales",
+            descripcion: "Humanoide diseñado para el trabajo general, integrado con modelos de lenguaje (OpenAI) para comprensión de instrucciones en lenguaje natural. Figure 02 incorpora visión-lenguaje-acción (VLA) que le permite observar su entorno, razonar y actuar. Ya desplegado en fábricas de BMW, representa la convergencia total de IA generativa y robótica.",
+            etiquetas: ["Humanoide", "VLA", "LLM", "OpenAI", "BMW", "Modelos Fundacionales"],
+            youtubeTimestamp: 810
+        },
+        {
+            id: 30,
+            nombre: "GR00T (NVIDIA)",
+            año: 2024,
+            yearDisplay: "2024",
+            creador: "NVIDIA",
+            era: "Modelos Fundacionales",
+            arquitectura: "Foundation Model / Sim-to-Real",
+            descripcion: "Modelo fundacional de NVIDIA para robótica humanoide que permite a los robots entender lenguaje natural, imitar movimientos humanos y aprender a interactuar con el mundo real. Entrenado con NVIDIA Isaac Sim y Omniverse para transferencia sim-to-real, GR00T promete ser el \"ChatGPT de la robótica\": un modelo universal para cualquier cuerpo robótico.",
+            etiquetas: ["Foundation Model", "Sim-to-Real", "Omniverse", "Isaac Sim", "Transformers", "GPU"],
+            youtubeTimestamp: 845
+        },
+        {
+            id: 31,
+            nombre: "Perseverance",
+            año: 2021,
+            yearDisplay: "2021",
+            creador: "NASA / JPL",
+            era: "Modelos Fundacionales",
+            arquitectura: "Autónoma / IA Avanzada + Dron",
+            descripcion: "El rover más avanzado de la NASA en Marte, equipado con el helicóptero Ingenuity (primer vuelo motorizado en otro planeta). Usa AutoNav mejorado para conducción autónoma a alta velocidad y PIXL para análisis mineralógico con rayos X. Su misión principal es buscar signos de vida microbiana antigua y preparar muestras para su retorno a la Tierra.",
+            etiquetas: ["Rover", "Marte", "Ingenuity", "Dron", "AutoNav", "Astrobiología"],
+            youtubeTimestamp: 630
+        }
+    ];
+
+    // ====================================================
+    // ERA DEFINITIONS
+    // ====================================================
+    const eras = [
+        {
+            id: "all",
+            nombre: "Todas",
+            icon: "fa-solid fa-layer-group",
+            color: "from-cyan-500 to-blue-500",
+            colorBg: "from-cyan-500/20 to-blue-500/20",
+            textColor: "text-cyan-400",
+            description: "Explora la evolución completa de la robótica a través de los siglos."
+        },
+        {
+            id: "Mitos y Autómatas",
+            nombre: "Mitos y Autómatas",
+            icon: "fa-solid fa-scroll",
+            color: "from-amber-500 to-orange-500",
+            colorBg: "from-amber-500/20 to-orange-500/20",
+            textColor: "text-amber-400",
+            description: "Desde las leyendas antiguas hasta los autómatas mecánicos del Renacimiento y la Ilustración."
+        },
+        {
+            id: "Industriales",
+            nombre: "Industriales",
+            icon: "fa-solid fa-industry",
+            color: "from-emerald-500 to-teal-500",
+            colorBg: "from-emerald-500/20 to-teal-500/20",
+            textColor: "text-emerald-400",
+            description: "La revolución de los brazos robóticos industriales que transformaron la manufactura global."
+        },
+        {
+            id: "Era de la Percepción",
+            nombre: "Era de la Percepción",
+            icon: "fa-solid fa-eye",
+            color: "from-violet-500 to-purple-500",
+            colorBg: "from-violet-500/20 to-purple-500/20",
+            textColor: "text-violet-400",
+            description: "Robots que ven, sienten y navegan: la era de los sensores, SLAM y la autonomía."
+        },
+        {
+            id: "Modelos Fundacionales",
+            nombre: "Modelos Fundacionales",
+            icon: "fa-solid fa-brain",
+            color: "from-rose-500 to-pink-500",
+            colorBg: "from-rose-500/20 to-pink-500/20",
+            textColor: "text-rose-400",
+            description: "La convergencia de LLMs, modelos de visión-lenguaje-acción y robótica humanoid."
+        }
+    ];
+
+    // ====================================================
+    // STATE
+    // ====================================================
+    let currentEra = "all";
+
+    // ====================================================
+    // INIT
+    // ====================================================
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('robotCount').textContent = robots.length;
+        renderEraTabs();
+        renderTimeline();
+        createParticles();
+    });
+
+    // ====================================================
+    // PARTICLES (Background ambiance)
+    // ====================================================
+    function createParticles() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDuration = (3 + Math.random() * 7) + 's';
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.opacity = 0.1 + Math.random() * 0.3;
+            particle.style.width = (1 + Math.random() * 2) + 'px';
+            particle.style.height = particle.style.width;
+            // Floating animation
+            particle.style.animation = `float ${3 + Math.random() * 4}s ease-in-out ${Math.random() * 2}s infinite`;
+            container.appendChild(particle);
+        }
+    }
+
+    // ====================================================
+    // ERA TABS
+    // ====================================================
+    function renderEraTabs() {
+        const container = document.getElementById('eraTabs');
+        container.innerHTML = eras.map(era => {
+            const count = era.id === 'all' ? robots.length : robots.filter(r => r.era === era.id).length;
+            return `
+                <button id="tab-${era.id.replace(/\s/g, '-')}"
+                    onclick="selectEra('${era.id}')"
+                    class="era-tab flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-700/50 text-sm font-medium whitespace-nowrap transition-all duration-300 hover:border-slate-600 ${currentEra === era.id ? 'era-tab-active' : 'text-slate-400 bg-slate-800/30'}">
+                    <i class="${era.icon} text-xs"></i>
+                    <span>${era.nombre}</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-700/50 ${currentEra === era.id ? 'text-cyan-300' : 'text-slate-500'}">${count}</span>
+                </button>
+            `;
+        }).join('');
+    }
+
+    function selectEra(eraId) {
+        currentEra = eraId;
+        const era = eras.find(e => e.id === eraId);
+
+        // Update era description banner
+        document.getElementById('eraTitle').textContent = era.nombre;
+        document.getElementById('eraText').textContent = era.description;
+        document.getElementById('eraIcon').innerHTML = `<i class="${era.icon}"></i>`;
+        document.getElementById('eraIcon').className = `w-10 h-10 rounded-lg bg-gradient-to-br ${era.colorBg} flex items-center justify-center shrink-0 ${era.textColor}`;
+        const count = eraId === 'all' ? robots.length : robots.filter(r => r.era === eraId).length;
+        document.getElementById('eraCount').textContent = count;
+
+        renderEraTabs();
+        renderTimeline();
+    }
+
+    // ====================================================
+    // TIMELINE RENDER
+    // ====================================================
+    function renderTimeline() {
+        const container = document.getElementById('timeline');
+        const filtered = currentEra === 'all' ? [...robots] : robots.filter(r => r.era === currentEra);
+        filtered.sort((a, b) => a.año - b.año);
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-20 text-slate-600">
+                    <i class="fa-solid fa-robot text-4xl mb-4"></i>
+                    <p class="text-lg">No se encontraron robots en esta era.</p>
+                </div>`;
+            return;
+        }
+
+        const eraColorMap = {
+            "Mitos y Autómatas": { dot: "bg-amber-500", ring: "ring-amber-500/30", glow: "shadow-amber-500/40", badge: "bg-amber-900/50 text-amber-300 border-amber-700/50" },
+            "Industriales": { dot: "bg-emerald-500", ring: "ring-emerald-500/30", glow: "shadow-emerald-500/40", badge: "bg-emerald-900/50 text-emerald-300 border-emerald-700/50" },
+            "Era de la Percepción": { dot: "bg-violet-500", ring: "ring-violet-500/30", glow: "shadow-violet-500/40", badge: "bg-violet-900/50 text-violet-300 border-violet-700/50" },
+            "Modelos Fundacionales": { dot: "bg-rose-500", ring: "ring-rose-500/30", glow: "shadow-rose-500/40", badge: "bg-rose-900/50 text-rose-300 border-rose-700/50" },
+        };
+
+        let html = `<div class="relative">`;
+        // Vertical line
+        html += `<div class="absolute left-[23px] md:left-1/2 md:-translate-x-[1px] top-0 bottom-0 w-[2px] timeline-line"></div>`;
+
+        filtered.forEach((robot, index) => {
+            const colors = eraColorMap[robot.era] || { dot: "bg-cyan-500", ring: "ring-cyan-500/30", glow: "shadow-cyan-500/40", badge: "bg-cyan-900/50 text-cyan-300 border-cyan-700/50" };
+            const isRight = index % 2 === 0;
+            const staggerClass = `stagger-${(index % 8) + 1}`;
+
+            html += `
+            <div class="relative flex items-start mb-8 md:mb-12 group animate-fade-in-up opacity-0 ${staggerClass}"
+                 style="animation-fill-mode: forwards;">
+
+                <!-- Mobile: Left-aligned layout -->
+                <!-- Desktop: Alternating layout -->
+                <div class="flex w-full ${isRight ? 'md:flex-row' : 'md:flex-row-reverse'}">
+
+                    <!-- Content Card -->
+                    <div class="ml-14 md:ml-0 md:w-[calc(50%-32px)] ${isRight ? 'md:pr-4 md:text-right' : 'md:pl-4'}">
+                        <div onclick="openModal(${robot.id})"
+                             class="glass-card rounded-xl p-4 cursor-pointer hover:border-cyan-500/30 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/5 hover:-translate-y-0.5 active:scale-[0.98]">
+                            <!-- Year badge -->
+                            <div class="flex items-center gap-2 mb-2 ${isRight ? 'md:justify-end' : ''}">
+                                <span class="text-xs font-display font-bold ${colors.badge} px-2.5 py-1 rounded-lg border">${robot.yearDisplay}</span>
+                                <span class="text-[10px] text-slate-600 uppercase tracking-wider hidden md:inline">${robot.era}</span>
+                            </div>
+                            <!-- Robot name -->
+                            <h3 class="text-base font-bold text-white mb-1.5 group-hover:text-cyan-300 transition-colors">${robot.nombre}</h3>
+                            <!-- Creator -->
+                            <p class="text-xs text-slate-500 mb-2 flex items-center gap-1.5 ${isRight ? 'md:justify-end' : ''}">
+                                <i class="fa-solid fa-user-gear"></i> ${robot.creador}
+                            </p>
+                            <!-- Architecture -->
+                            <p class="text-xs text-purple-400/80 mb-3 flex items-center gap-1.5 ${isRight ? 'md:justify-end' : ''}">
+                                <i class="fa-solid fa-microchip"></i> ${robot.arquitectura}
+                            </p>
+                            <!-- Description truncated -->
+                            <p class="text-xs text-slate-400 leading-relaxed line-clamp-2 mb-3">${robot.descripcion}</p>
+                            <!-- Tags (max 3) -->
+                            <div class="flex flex-wrap gap-1.5 ${isRight ? 'md:justify-end' : ''}">
+                                ${robot.etiquetas.slice(0, 3).map(tag => `
+                                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-950/80 text-blue-300 border border-blue-800/30">${tag}</span>
+                                `).join('')}
+                                ${robot.etiquetas.length > 3 ? `<span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800/50 text-slate-500">+${robot.etiquetas.length - 3}</span>` : ''}
+                            </div>
+                            <!-- Play hint -->
+                            <div class="mt-3 flex items-center gap-1.5 text-[10px] text-cyan-600 ${isRight ? 'md:justify-end' : ''}">
+                                <i class="fa-solid fa-play"></i>
+                                <span>Ver en video</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Center Node (Desktop) -->
+                    <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-4 z-10">
+                        <div class="node-ring w-12 h-12 rounded-full ${colors.dot} ring-4 ${colors.ring} flex items-center justify-center cursor-pointer shadow-lg ${colors.glow}"
+                             onclick="openModal(${robot.id})">
+                            <span class="text-[10px] font-bold text-white font-display">${typeof robot.año === 'number' && robot.año < 0 ? 'AC' : robot.año > 1900 ? String(robot.año).slice(2) : ''}</span>
+                        </div>
+                    </div>
+
+                    <!-- Spacer for alternating side -->
+                    <div class="hidden md:block md:w-[calc(50%-32px)]"></div>
+                </div>
+            </div>`;
+        });
+
+        html += `</div>`;
+        container.innerHTML = html;
+
+        // Update era count in banner
+        const era = eras.find(e => e.id === currentEra);
+        document.getElementById('eraCount').textContent = filtered.length;
+    }
+
+    // ====================================================
+    // MODAL
+    // ====================================================
+    function openModal(robotId) {
+        const robot = robots.find(r => r.id === robotId);
+        if (!robot) return;
+
+        const eraObj = eras.find(e => e.id === robot.era);
+        const eraColorMap = {
+            "Mitos y Autómatas": "bg-gradient-to-br from-amber-500/20 to-orange-500/20 text-amber-400",
+            "Industriales": "bg-gradient-to-br from-emerald-500/20 to-teal-500/20 text-emerald-400",
+            "Era de la Percepción": "bg-gradient-to-br from-violet-500/20 to-purple-500/20 text-violet-400",
+            "Modelos Fundacionales": "bg-gradient-to-br from-rose-500/20 to-pink-500/20 text-rose-400",
+        };
+
+        // Set content
+        document.getElementById('modalTitle').textContent = robot.nombre;
+        document.getElementById('modalSubtitle').textContent = `${robot.yearDisplay} · ${robot.creador}`;
+        document.getElementById('modalEraIcon').className = `w-8 h-8 rounded-lg flex items-center justify-center text-sm ${eraColorMap[robot.era] || 'bg-cyan-500/20 text-cyan-400'}`;
+        document.getElementById('modalEraIcon').innerHTML = `<i class="${eraObj ? eraObj.icon : 'fa-solid fa-robot'}"></i>`;
+
+        // Video
+        const originParam = window.location.origin && window.location.origin !== "null" ? window.location.origin : "https://www.youtube.com";
+        document.getElementById('modalVideo').src = `https://www.youtube.com/embed/hft_i3TpRok?start=${robot.youtubeTimestamp}&autoplay=1&mute=1&origin=${originParam}`;
+        
+        // Enlace Directo (Formato sugerido para casos de error en local)
+        document.getElementById('modalDirectLink').href = `https://youtu.be/hft_i3TpRok?t=${robot.youtubeTimestamp}`;
+
+        // Stats
+        document.getElementById('modalYear').textContent = robot.yearDisplay;
+        document.getElementById('modalCreator').textContent = robot.creador;
+        document.getElementById('modalEra').textContent = robot.era;
+        document.getElementById('modalArch').textContent = robot.arquitectura;
+
+        // Description
+        document.getElementById('modalDescription').textContent = robot.descripcion;
+
+        // Tags
+        document.getElementById('modalTags').innerHTML = robot.etiquetas.map(tag => `
+            <span class="text-xs px-3 py-1 rounded-full bg-blue-950/60 text-blue-300 border border-blue-800/30 font-medium">${tag}</span>
+        `).join('');
+
+        // Show modal
+        const modal = document.getElementById('modal');
+        const content = document.getElementById('modalContent');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        // Trigger animation
+        requestAnimationFrame(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        });
+        // Prevent body scroll
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('modal');
+        const content = document.getElementById('modalContent');
+
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            // Stop video
+            document.getElementById('modalVideo').src = '';
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }, 300);
+    }
+
+    function closeModalOutside(event) {
+        if (event.target === document.getElementById('modal')) {
+            closeModal();
+        }
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+    </script>
+</body>
+</html>
