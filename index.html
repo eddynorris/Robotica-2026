@@ -342,7 +342,8 @@
             arquitectura: "Mítica / Conceptual",
             descripcion: "Gigante de bronce de la mitología griega, considerado el primer concepto de un autómata guardián. Según la leyenda, Hefesto lo forjó para proteger la isla de Creta, patrullando sus costas tres veces al día. Representa la aspiración humana ancestral de crear seres artificiales con capacidad de acción autónoma.",
             etiquetas: ["Mitología", "Autómata", "Guardián", "Concepto"],
-            youtubeTimestamp: 15
+            youtubeTimestamp: 15,
+            duration: 18
         },
         {
             id: 2,
@@ -948,9 +949,10 @@
         document.getElementById('modalEraIcon').className = `w-8 h-8 rounded-lg flex items-center justify-center text-sm ${eraColorMap[robot.era] || 'bg-cyan-500/20 text-cyan-400'}`;
         document.getElementById('modalEraIcon').innerHTML = `<i class="${eraObj ? eraObj.icon : 'fa-solid fa-robot'}"></i>`;
 
-        // Video
+        // Video - Configurado como Clip (Inicio y Fin)
+        const endTime = robot.youtubeTimestamp + (robot.duration || 15);
         const originParam = window.location.origin && window.location.origin !== "null" ? window.location.origin : "https://www.youtube.com";
-        document.getElementById('modalVideo').src = `https://www.youtube.com/embed/hft_i3TpRok?start=${robot.youtubeTimestamp}&autoplay=1&mute=1&origin=${originParam}`;
+        document.getElementById('modalVideo').src = `https://www.youtube.com/embed/hft_i3TpRok?start=${robot.youtubeTimestamp}&end=${endTime}&autoplay=1&mute=1&modestbranding=1&rel=0&origin=${originParam}`;
         
         // Enlace Directo (Formato sugerido para casos de error en local)
         document.getElementById('modalDirectLink').href = `https://youtu.be/hft_i3TpRok?t=${robot.youtubeTimestamp}`;
