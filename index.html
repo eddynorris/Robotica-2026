@@ -423,7 +423,7 @@
                 arquitectura: "Mítica / Conceptual",
                 descripcion: "Gigante de bronce de la mitología griega, considerado el primer concepto de un autómata guardián. Según la leyenda, Hefesto lo forjó para proteger la isla de Creta, patrullando sus costas tres veces al día. Representa la aspiración humana ancestral de crear seres artificiales con capacidad de acción autónoma.",
                 etiquetas: ["Mitología", "Autómata", "Guardián", "Concepto"],
-                youtubeShortId: "uxztCy7sv3k"
+                image: "talos.jpg"
             },
             {
                 id: 2,
@@ -1085,20 +1085,20 @@
                 modalImage.src = robot.image;
                 modalImage.alt = robot.nombre;
                 modalImage.classList.remove('hidden');
-                
+
                 // Update link for source credit or just reference
                 directLink.href = robot.image;
                 directLinkText.textContent = "Ver imagen en alta resolución";
-                
+
             } else if (robot.youtubeShortId) {
                 // Render as a YouTube Short (Vertical 9:16 format)
                 videoContainer.classList.remove('aspect-video');
                 videoContainer.classList.add('aspect-[9/16]');
-                videoContainer.style.maxWidth = '300px'; 
+                videoContainer.style.maxWidth = '300px';
 
                 modalVideo.src = `https://www.youtube.com/embed/${robot.youtubeShortId}?autoplay=1&mute=1&modestbranding=1&rel=0&origin=${originParam}`;
                 modalVideo.classList.remove('hidden');
-                
+
                 directLink.href = `https://www.youtube.com/shorts/${robot.youtubeShortId}`;
                 directLinkText.innerHTML = `Ver Short oficial en YouTube <br><span class="text-[9px] text-red-500/70 font-mono">${robot.youtubeShortId}</span>`;
 
@@ -1106,7 +1106,7 @@
                 // Render as a Custom Standard Video (Horizontal 16:9 format)
                 modalVideo.src = `https://www.youtube.com/embed/${robot.youtubeId}?autoplay=1&mute=1&modestbranding=1&rel=0&origin=${originParam}`;
                 modalVideo.classList.remove('hidden');
-                
+
                 directLink.href = `https://youtu.be/${robot.youtubeId}`;
                 directLinkText.textContent = "Ver video oficial en YouTube";
             }
